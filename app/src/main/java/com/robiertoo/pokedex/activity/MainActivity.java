@@ -1,6 +1,7 @@
 package com.robiertoo.pokedex.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         PokemonService service = retrofit.create(PokemonService.class);
 
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         PokemonAdapter pokemonAdapter = new PokemonAdapter(pokemons);
         recyclerView.setAdapter(pokemonAdapter);
 
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onResponse(Call<Pokemon> call, Response<Pokemon> response) {
                     if(!response.isSuccessful()) Log.e(TAG, response.message());
                     Pokemon pokemon = response.body();
+                    Log.i(TAG, pokemon.getSprites().getSprite());
                     pokemons.add(pokemon);
                     pokemonAdapter.notifyDataSetChanged();
                     Log.i(TAG, "" + pokemons.size());
