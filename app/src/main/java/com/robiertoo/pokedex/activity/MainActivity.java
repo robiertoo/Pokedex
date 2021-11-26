@@ -15,7 +15,10 @@ import com.robiertoo.pokedex.models.PokemonList;
 import com.robiertoo.pokedex.services.PokemonService;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -57,8 +60,11 @@ public class MainActivity extends AppCompatActivity {
                     Pokemon pokemon = response.body();
                     Log.i(TAG, pokemon.getSprites().getSprite());
                     pokemons.add(pokemon);
+
+                    Collections.sort(pokemons, (Pokemon p1, Pokemon p2) -> p1.getId() - p2.getId());
+
                     pokemonAdapter.notifyDataSetChanged();
-                    Log.i(TAG, "" + pokemons.size());
+                    Log.i(TAG, "" + pokemon.getId());
                 }
 
                 @Override
