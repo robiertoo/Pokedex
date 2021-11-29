@@ -7,8 +7,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Toast;
 
 import com.robiertoo.pokedex.R;
+import com.robiertoo.pokedex.RecyclerItemClickListener;
 import com.robiertoo.pokedex.adapter.PokemonAdapter;
 import com.robiertoo.pokedex.models.Pokemon;
 import com.robiertoo.pokedex.models.PokemonList;
@@ -46,6 +50,22 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         PokemonAdapter pokemonAdapter = new PokemonAdapter(pokemons);
         recyclerView.setAdapter(pokemonAdapter);
+        recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(this, recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Toast.makeText(view.getContext(), pokemons.get(position).getName(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onLongItemClick(View view, int position) {
+
+            }
+
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+            }
+        }));
 
         add151Pokemons(service, pokemonAdapter);
     }
