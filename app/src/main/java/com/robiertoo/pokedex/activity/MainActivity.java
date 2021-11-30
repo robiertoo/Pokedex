@@ -2,9 +2,9 @@ package com.robiertoo.pokedex.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,14 +15,14 @@ import com.robiertoo.pokedex.R;
 import com.robiertoo.pokedex.RecyclerItemClickListener;
 import com.robiertoo.pokedex.adapter.PokemonAdapter;
 import com.robiertoo.pokedex.models.Pokemon;
-import com.robiertoo.pokedex.models.PokemonList;
 import com.robiertoo.pokedex.services.PokemonService;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
+
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -53,7 +53,9 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(this, recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Toast.makeText(view.getContext(), pokemons.get(position).getName(), Toast.LENGTH_SHORT).show();
+                Intent pokemonIntent = new Intent(view.getContext(), PokemonStatusActivity.class);
+                pokemonIntent.putExtra("pokemon_id", "" + position);
+                startActivity(pokemonIntent);
             }
 
             @Override
@@ -76,20 +78,25 @@ public class MainActivity extends AppCompatActivity {
             call.enqueue(new Callback<Pokemon>() {
                 @Override
                 public void onResponse(Call<Pokemon> call, Response<Pokemon> response) {
-                    if(!response.isSuccessful()) Log.e(TAG, response.message());
-                    Pokemon pokemon = response.body();
-                    Log.i(TAG, pokemon.getSprites().getSprite());
-                    pokemons.add(pokemon);
+                    try {
+                        if(!response.isSuccessful()) Log.e(TAG, response.message());
+                        Pokemon pokemon = response.body();
+                        Log.i(TAG, pokemon.getSprites().getSprite());
+                        pokemons.add(pokemon);
 
-                    Collections.sort(pokemons, (Pokemon p1, Pokemon p2) -> p1.getId() - p2.getId());
+                        Collections.sort(pokemons, (Pokemon p1, Pokemon p2) -> p1.getId() - p2.getId());
 
-                    pokemonAdapter.notifyDataSetChanged();
-                    Log.i(TAG, "" + pokemon.getId());
+                        pokemonAdapter.notifyDataSetChanged();
+                        Log.i(TAG, "" + pokemon.getId());
+                    } catch(Exception e) {
+                        System.out.println(e.getMessage());
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<Pokemon> call, Throwable t) {
                     Log.e(TAG, t.getMessage());
+                    Toast.makeText(getApplicationContext(), "Sem internet!", Toast.LENGTH_LONG).show();
                 }
             });
         }
